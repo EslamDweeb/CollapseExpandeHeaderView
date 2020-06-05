@@ -15,6 +15,7 @@ class ScrollViewCell:UICollectionViewCell {
         scrollView.addSubview(containerView)
         containerView.anchor(top: scrollView.topAnchor, leading: scrollView.leadingAnchor, bottom: scrollView.bottomAnchor, trailing: scrollView.trailingAnchor)
         containerView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+        containerView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor, multiplier: 1.01).isActive = true
         return scrollView
     }()
     lazy var firstView:UIView = {
@@ -37,7 +38,7 @@ class ScrollViewCell:UICollectionViewCell {
         v.backgroundColor = .systemBlue
         return v
     }()
-    lazy var stackView = VerticalStackView(arrangedSubviews: [firstView,secondView,thirdView,fourthView], spacing: 20)
+    lazy var stackView = VerticalStackView(arrangedSubviews: [firstView], spacing: 20)
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -60,6 +61,7 @@ class ScrollViewCell:UICollectionViewCell {
         scrollView.anchor(top: topAnchor, leading: leadingAnchor, bottom: bottomAnchor, trailing: trailingAnchor)
         firstView.translatesAutoresizingMaskIntoConstraints = false
         firstView.heightAnchor.constraint(equalToConstant: 250).isActive = true
-        stackView.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, bottom: containerView.bottomAnchor, trailing: containerView.trailingAnchor,padding: .init(top: 8, left: 8, bottom: 8, right: 8))
+        stackView.anchor(top: containerView.topAnchor, leading: containerView.leadingAnchor, bottom: nil, trailing: containerView.trailingAnchor,padding: .init(top: 8, left: 8, bottom: 0, right: 8))
+        stackView.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -8).isActive = true
     }
 }

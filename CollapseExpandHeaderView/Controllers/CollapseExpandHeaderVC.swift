@@ -20,6 +20,8 @@ class CollapseExpandHeaderVC: UIViewController {
     lazy var headerView:UIView = {
         let v = UIView()
         v.backgroundColor = .systemBlue
+        v.isUserInteractionEnabled = true
+        v.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handelPangGesture(_:))))
         return v
     }()
     lazy var collectionView:UICollectionView = {
@@ -55,6 +57,28 @@ class CollapseExpandHeaderVC: UIViewController {
         headerConstraints = headerView.anchor(top: view.topAnchor, leading: view.leadingAnchor, bottom: nil, trailing: view.trailingAnchor,size: .init(width: 0, height: headerViewMaxHeight))
         collectionView.anchor(top: headerView.bottomAnchor, leading: view.leadingAnchor, bottom: view.bottomAnchor, trailing: view.trailingAnchor)
     }
+    @objc func handelPangGesture(_ gesture:UIPanGestureRecognizer){
+        let translation = gesture.translation(in: headerView)
+         gesture.setTranslation(CGPoint(x: translation.x , y: 0.0), in:
+         headerView )
+         if translation.y > 0 &&
+            headerConstraints?.height?.constant == headerViewMaxHeight {
+             return
+          }
+         if translation.y < 0 &&
+            headerConstraints?.height?.constant == headerViewMinHeight {
+             return
+         }
+          if let cell = collectionView.visibleCells.first as?
+                 ScrollViewCell {
+            cell.scrollView.contentOffset.y =
+                  cell.scrollView.contentOffset.y - translation.y
+           }else if let cell = collectionView.visibleCells.first as?
+               TableViewCell {
+            cell.tableView.contentOffset.y =
+                  cell.tableView.contentOffset.y - translation.y
+        }
+    }
 }
 
 
@@ -68,11 +92,13 @@ extension CollapseExpandHeaderVC:UICollectionViewDelegate,UICollectionViewDataSo
         case 0:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScrollViewCell.getIdentifier(), for: indexPath) as! ScrollViewCell
             cell.scrollView.delegate = self
+            cell.scrollView.setContentOffset(.zero, animated: false)
             return cell
         case 1:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TableViewCell.getIdentifier(), for: indexPath) as! TableViewCell
             cell.tableView.delegate = self
             cell.tableView.dataSource = self
+            cell.tableView.setContentOffset(.zero, animated: false)
             return cell
         default:
             return UICollectionViewCell()
@@ -85,7 +111,7 @@ extension CollapseExpandHeaderVC:UICollectionViewDelegate,UICollectionViewDataSo
 }
 extension CollapseExpandHeaderVC:UITableViewDelegate,UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 50
+        return 5
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

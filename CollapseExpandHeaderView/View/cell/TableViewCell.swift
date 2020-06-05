@@ -10,8 +10,8 @@ import UIKit
 
 class TableViewCell:UICollectionViewCell{
     static let reuseId = "cell"
-    lazy var tableView:UITableView = {
-       let table = UITableView()
+    lazy var tableView:HelperTableView = {
+       let table = HelperTableView()
         table.tableFooterView = UIView()
         table.register(UITableViewCell.self, forCellReuseIdentifier: TableViewCell.reuseId)
         return table
